@@ -1,0 +1,43 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: /bin/sh -c "go run src/main.go"
+    environment:
+      DB_USER: go_test
+      DB_PASS: password
+      DB_INSTANCE_CONNECTION_NAME: db:3306
+      DB_NAME: go_database
+      ENVIRONMENT: dev
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+    ports:
+      - 8080:8080
+    depends_on:
+      - "db"
+
+  db:
+    image: mysql:8.0
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: root
+    #   MYSQL_DATABASE: go_database
+    #   MYSQL_USER: go_test
+    #   MYSQL_PASSWORD: password
+    #   TZ: 'Asia/Tokyo'
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+    env_file:
+      - ./db/docker.env
+    ports:
+      - 3306:3306
+
+volumes:
+  db-data:
+    driver: local

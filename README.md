@@ -1,1 +1,1 @@
-# workout-wizard-api
+# go-backend-template
