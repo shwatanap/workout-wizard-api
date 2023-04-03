@@ -1,0 +1,41 @@
+version: '3'
+services:
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    environment:
+      DB_USER: go_test
+      DB_PASS: password
+      DB_INSTANCE_CONNECTION_NAME: db:3306
+      DB_NAME: go_database
+      ENVIRONMENT: dev
+    stdin_open: true
+    tty: true
+    volumes:
+      - .:/app
+    ports:
+      - 8080:8080
+    depends_on:
+      db:
+        condition: service_healthy
+
+  db:
+    image: mysql:8.0
+    command: mysqld --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - ./db/data:/var/lib/mysql
+      - ./db/init:/docker-entrypoint-initdb.d
+      - ./db/my.cnf:/etc/mysql/conf.d/my.cnf
+    env_file:
+      - ./db/docker.env
+    ports:
+      - 3306:3306
+    healthcheck:
+      test: ["CMD", "mysqladmin", "--user=root", "--password=example", "ping"]
+      interval: 5s
+      retries: 10
+
+volumes:
+  db-data:
+    driver: local
