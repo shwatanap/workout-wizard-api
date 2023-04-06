@@ -8,16 +8,18 @@ package wire
 
 import (
 	"database/sql"
-	"github.com/shwatanap/go-backend-template/src/infra/repository"
-	"github.com/shwatanap/go-backend-template/src/presen/handler"
-	"github.com/shwatanap/go-backend-template/src/usecase"
+	repository2 "github.com/shwatanap/workout-wizard-api/src/infra/api/repository"
+	"github.com/shwatanap/workout-wizard-api/src/infra/db/repository"
+	"github.com/shwatanap/workout-wizard-api/src/presen/handler"
+	"github.com/shwatanap/workout-wizard-api/src/usecase"
 )
 
 // Injectors from wire.go:
 
-func InitTemplateHandler(driver *sql.DB) handler.TemplateHandler {
-	iTemplateRepository := repository.NewTemplateRepository(driver)
-	templateUsecase := usecase.NewTemplateUsecase(iTemplateRepository)
-	templateHandler := handler.NewTemplateHandler(templateUsecase)
-	return templateHandler
+func InitMenuHandler(driver *sql.DB) handler.MenuHandler {
+	iMenuRepository := repository.NewMenuRepository(driver)
+	iMenuExternalRepository := repository2.NewMenuExternalRepository()
+	menuUsecase := usecase.NewMenuUsecase(iMenuRepository, iMenuExternalRepository)
+	menuHandler := handler.NewMenuHandler(menuUsecase)
+	return menuHandler
 }

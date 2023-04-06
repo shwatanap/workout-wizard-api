@@ -1,10 +1,12 @@
-package sql
+package driver
 
 import (
 	"database/sql"
 	"log"
 
-	"github.com/shwatanap/go-backend-template/src/config"
+	_ "github.com/go-sql-driver/mysql"
+
+	"github.com/shwatanap/workout-wizard-api/src/config"
 )
 
 func NewDriver() *sql.DB {

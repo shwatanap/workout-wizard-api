@@ -8,16 +8,18 @@ import (
 
 	"github.com/google/wire"
 
-	"github.com/shwatanap/go-backend-template/src/infra/repository"
-	"github.com/shwatanap/go-backend-template/src/presen/handler"
-	"github.com/shwatanap/go-backend-template/src/usecase"
+	er "github.com/shwatanap/workout-wizard-api/src/infra/api/repository"
+	"github.com/shwatanap/workout-wizard-api/src/infra/db/repository"
+	"github.com/shwatanap/workout-wizard-api/src/presen/handler"
+	"github.com/shwatanap/workout-wizard-api/src/usecase"
 )
 
-func InitTemplateHandler(driver *sql.DB) handler.TemplateHandler {
+func InitMenuHandler(driver *sql.DB) handler.MenuHandler {
 	wire.Build(
-		repository.NewTemplateRepository,
-		usecase.NewTemplateUsecase,
-		handler.NewTemplateHandler,
+		repository.NewMenuRepository,
+		er.NewMenuExternalRepository,
+		usecase.NewMenuUsecase,
+		handler.NewMenuHandler,
 	)
 	return nil
 }
