@@ -7,7 +7,7 @@ import (
 )
 
 type IMenuRepository interface {
-	Create(ctx context.Context, me *entity.Menu) error
+	Create(ctx context.Context, me *entity.Menu) (int64, error)
 }
 
 type IMenuExternalRepository interface {
