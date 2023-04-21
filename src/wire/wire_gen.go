@@ -17,9 +17,10 @@ import (
 // Injectors from wire.go:
 
 func InitMenuHandler(driver *sql.DB) handler.MenuHandler {
+	iWorkoutRepository := repository.NewWorkoutRepository(driver)
 	iMenuRepository := repository.NewMenuRepository(driver)
 	iMenuExternalRepository := repository2.NewMenuExternalRepository()
-	menuUsecase := usecase.NewMenuUsecase(iMenuRepository, iMenuExternalRepository)
+	menuUsecase := usecase.NewMenuUsecase(iWorkoutRepository, iMenuRepository, iMenuExternalRepository)
 	menuHandler := handler.NewMenuHandler(menuUsecase)
 	return menuHandler
 }

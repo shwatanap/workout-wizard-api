@@ -17,6 +17,7 @@ import (
 func InitMenuHandler(driver *sql.DB) handler.MenuHandler {
 	wire.Build(
 		repository.NewMenuRepository,
+		repository.NewWorkoutRepository,
 		er.NewMenuExternalRepository,
 		usecase.NewMenuUsecase,
 		handler.NewMenuHandler,
