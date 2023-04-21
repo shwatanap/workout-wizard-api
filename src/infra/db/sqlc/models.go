@@ -12,3 +12,10 @@ type Menu struct {
 	Target  string `json:"target"`
 	Comment string `json:"comment"`
 }
+
+type Workout struct {
+	ID     int32  `json:"id"`
+	MenuID int32  `json:"menu_id"`
+	Name   string `json:"name"`
+	Detail string `json:"detail"`
+}

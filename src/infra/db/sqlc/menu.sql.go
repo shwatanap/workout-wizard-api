@@ -29,3 +29,32 @@ func (q *Queries) CreateMenu(ctx context.Context, arg CreateMenuParams) error {
 	_, err := q.db.ExecContext(ctx, createMenu, arg.UserID, arg.Target, arg.Comment)
 	return err
 }
+
+const getCreatedMenuID = `-- name: GetCreatedMenuID :one
+SELECT LAST_INSERT_ID()
+`
+
+func (q *Queries) GetCreatedMenuID(ctx context.Context) (int64, error) {
+	row := q.db.QueryRowContext(ctx, getCreatedMenuID)
+	var last_insert_id int64
+	err := row.Scan(&last_insert_id)
+	return last_insert_id, err
+}
+
+const getMenu = `-- name: GetMenu :one
+SELECT (
+	id,
+	user_id,
+	target,
+	comment
+)
+FROM menus
+WHERE id = ?
+`
+
+func (q *Queries) GetMenu(ctx context.Context, id int32) (interface{}, error) {
+	row := q.db.QueryRowContext(ctx, getMenu, id)
+	var column_1 interface{}
+	err := row.Scan(&column_1)
+	return column_1, err
+}
