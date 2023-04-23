@@ -24,7 +24,7 @@ func NewMenuExternalRepository() repository.IMenuExternalRepository {
 	return &menuExternalRepository{}
 }
 
-func (mer *menuExternalRepository) Create(ctx context.Context, user_id int, target, comment string) (*entity.Menu, error) {
+func (mer *menuExternalRepository) Create(ctx context.Context, userID int, target, comment string) (*entity.Menu, error) {
 	messages, err := createMessages()
 	if err != nil {
 		return nil, err
@@ -41,25 +41,30 @@ func (mer *menuExternalRepository) Create(ctx context.Context, user_id int, targ
 	}
 	req.Header.Set("Content-Type", "application/json")
 	req.Header.Set("Authorization", "Bearer "+os.Getenv("CHATGPT_API_KEY"))
-	client := &http.Client{
-		// リソース節約のためにタイムアウトを設定する
-		Timeout: 20 * time.Second,
-	}
-
-	resp, err := client.Do(req)
+	body, err := sendHttpRequest(ctx, req)
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
 
-	if resp.StatusCode != 200 {
-		return nil, errors.New("bad status: " + resp.Status)
-	}
+	// client := &http.Client{
+	// 	// リソース節約のためにタイムアウトを設定する
+	// 	Timeout: 20 * time.Second,
+	// }
 
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
+	// resp, err := client.Do(req)
+	// if err != nil {
+	// 	return nil, err
+	// }
+	// defer resp.Body.Close()
+
+	// if resp.StatusCode != 200 {
+	// 	return nil, errors.New("bad status: " + resp.Status)
+	// }
+
+	// body, err := io.ReadAll(resp.Body)
+	// if err != nil {
+	// 	return nil, err
+	// }
 
 	var res response.Response
 	if err := json.Unmarshal(body, &res); err != nil {
@@ -74,4 +79,28 @@ func createMessages() ([]*request.RequestMessage, error) {
 	return []*request.RequestMessage{
 		request.NewRequestMessage("user", "Hello"),
 	}, nil
+}
+
+func sendHttpRequest(ctx context.Context, req *http.Request) ([]byte, error) {
+	client := &http.Client{
+		// リソース節約のためにタイムアウトを設定する
+		Timeout: 20 * time.Second,
+	}
+
+	resp, err := client.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, errors.New("bad status: " + resp.Status)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	return body, nil
 }
